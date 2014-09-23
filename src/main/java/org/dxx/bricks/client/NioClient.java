@@ -20,7 +20,7 @@ import org.dxx.bricks.Codec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NioClient {
+public class NioClient implements Runnable{
 	private static final Logger logger = LoggerFactory.getLogger(NioClient.class);
 	
 	private String serverHost;
@@ -48,6 +48,20 @@ public class NioClient {
     	request = ByteBuffer.allocateDirect(1);
     	request.put(Byte.valueOf("1"));
     }
+    
+    
+
+	@Override
+	public void run() {
+		try {
+			init();
+			listen();
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+
 
 	public NioClient init() throws IOException{
         SocketChannel channel = SocketChannel.open();
@@ -105,17 +119,24 @@ public class NioClient {
     
     public static void main(String[] args) throws IOException {
     	String host = "127.0.0.1";
-    	if(args.length > 0 && args[0] != null) {
-    		host = args[0];
-    	}
-    	if(args.length > 1 && args[1] != null) {
-    		C_FILE = args[1];
-    	}
-    	new File(C_FILE).delete();
-    	System.out.println(1);
+    	int conns = 2;
     	try {
-    		new NioClient(host, 9981).init().listen();
-    		logger.info("Nio client is running! server : {}, clientFile : {}", host, C_FILE);
+	    	if(args.length > 0 && args[0] != null) {
+	    		host = args[0];
+	    	}
+	    	if(args.length > 1 && args[1] != null) {
+	    		C_FILE = args[1];
+	    	}
+	    	if(args.length > 2 && args[2] != null) {
+	    		conns = Integer.valueOf(args[2]);
+	    	}
+	    	
+	    	new File(C_FILE).delete();
+	    	for(int i = 0 ; i < conns; i++) {
+	    		new Thread(new NioClient(host, 9981)).start();
+	    	}
+    		logger.info("Nio client is running! server : {}, targetFile : {}, conn : {}", 
+    				new Object[] {host, C_FILE, conns});
     	} catch (Exception e) {
     		logger.error("Err : " + e.getMessage(), e);
     	}

@@ -41,15 +41,13 @@
 	<profiles>
        <profile>
            <id>nioServer</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-           </activation>
            <build>
+           	<finalName>bricks-server</finalName>
            	<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>1.5</version>
+					<version>2.3</version>
 					<executions>
 						<execution>
 							<phase>package</phase>
@@ -73,15 +71,13 @@
        
        <profile>
            <id>nioClient</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-           </activation>
            <build>
+           	<finalName>bricks-client</finalName>
            	<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>1.5</version>
+					<version>2.3</version>
 					<executions>
 						<execution>
 							<phase>package</phase>
