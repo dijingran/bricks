@@ -104,8 +104,21 @@ public class NioClient {
     }
     
     public static void main(String[] args) throws IOException {
+    	String host = "127.0.0.1";
+    	if(args.length > 0 && args[0] != null) {
+    		host = args[0];
+    	}
+    	if(args.length > 1 && args[1] != null) {
+    		C_FILE = args[1];
+    	}
     	new File(C_FILE).delete();
-    	new NioClient("127.0.0.1", 9981).init().listen();
+    	System.out.println(1);
+    	try {
+    		new NioClient(host, 9981).init().listen();
+    		logger.info("Nio client is running! server : {}, clientFile : {}", host, C_FILE);
+    	} catch (Exception e) {
+    		logger.error("Err : " + e.getMessage(), e);
+    	}
 	}
    
 }

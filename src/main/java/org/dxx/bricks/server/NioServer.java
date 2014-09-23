@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.dxx.bricks.Brick;
 import org.dxx.bricks.Codec;
+import org.dxx.bricks.Extractor;
 import org.dxx.bricks.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ public class NioServer {
 	}
 
 	public void listen() throws IOException {
+		logger.info("Nio server is running.");
+		ByteBuffer bb = ByteBuffer.allocate(2);
 		while (true) {
 			selector.select();
 			Iterator<SelectionKey> ite = selector.selectedKeys().iterator();
@@ -58,13 +61,15 @@ public class NioServer {
 				}  else if (key.isReadable()) {
 					if(!finished) {
 						SocketChannel channel = (SocketChannel) key.channel();
-						ByteBuffer bb = ByteBuffer.allocate(2);
+						bb.rewind();
 						channel.read(bb);
 						if(bb.hasRemaining()) {
 							byte[] request = new byte[bb.remaining()];
 							bb.get(request);
 							Brick brick = brickReader.getNext();
+							
 							if(brick != null) {
+								brick.setContent(Extractor.extract(brick.getContent()));
 								channel.write(ByteBuffer.wrap(encoder.encode(brick)));
 							} else {
 								Brick signal = new Brick();

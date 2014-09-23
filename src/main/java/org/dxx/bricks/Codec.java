@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
+ * Not thread safe. Do not share this instance.
  * 
  * | brick行号  | brick长度   | brick 内容   <br>
  * --------------------------------  <br>
